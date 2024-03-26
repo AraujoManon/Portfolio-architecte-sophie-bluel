@@ -121,6 +121,33 @@ li:hover {
 #introduction p {
 	margin-bottom: 0.5em;
 }
+.projets {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.buttons { 
+	display: flex;
+	flex-direction: row;
+	margin: 51px 0px;
+	gap: 10px;
+	
+}
+
+button {
+	color: #1D6154;
+	background-color: white;
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	padding: 9px 15px;
+	font-size: 16px;
+}
+
+.activationButton {
+	color: white;
+	background-color: #1D6154;
+}
 #portfolio h2 {
 	text-align: center;
 	margin-bottom: 1em;
