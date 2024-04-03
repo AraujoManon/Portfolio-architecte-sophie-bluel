@@ -213,7 +213,8 @@ footer nav ul {
 	margin: 2em
 }
 
-/* mode edition Admin */
+/* mode edition Admin*/
+
 
 .edition {
 display: none;
@@ -230,21 +231,60 @@ display: none;
 	justify-content: center;
 }
 
-.edition h1 {
+.editionText {
 	display: none;
 }
 
-.edition h1 .h1Admin {
+.h1Admin {
+	display: flex;
 	color: white;
 	font-size: 16px;
 	font-weight: 400;
 	font-family: "Work Sans";
 }
 
-.projets p {
+.projetsText {
+	display: flex;
+}
+
+.projetP {
 	display: none;
 }
 
-.projets svg {
+.pAdmin{
+	display: flex;
+	font-family: "Work Sans";
+	font-weight: 400;
+	font-size: 14px;
+}
+
+.projetsSvg{
+	display: none;
+}
+
+.svgAdmin  {
+	display: flex;
+	margin-left: 31px;
+	margin-right: 10px;
+}
+
+.projetsAdmin { 
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: center;
+	margin-top: 139px;
+	margin-bottom: 68px;
+	height: 36px;
+}
+
+.buttonAdmin{
+	display: none;	
+} 
+
+
+/* Modals */
+
+.containerModals{
 	display: none;
 }

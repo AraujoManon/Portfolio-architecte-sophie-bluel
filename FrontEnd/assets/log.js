@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (response.ok) {
-        window.sessionStorage.setItem("loggedIn", true);
+        window.sessionStorage.setItem("loged", true);
         window.location.href = "../index.html";
       } else {
         messageError.textContent =
