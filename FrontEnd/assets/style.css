@@ -213,3 +213,38 @@ footer nav ul {
 	margin: 2em
 }
 
+/* mode edition Admin */
+
+.edition {
+display: none;
+}
+
+.editionAdmin {
+	background-color: black;
+	display: flex;
+	flex-direction: row;
+	gap: 11.42px;
+	align-items: center;
+	height: 59px;
+	margin: 0 -150px ;
+	justify-content: center;
+}
+
+.edition h1 {
+	display: none;
+}
+
+.edition h1 .h1Admin {
+	color: white;
+	font-size: 16px;
+	font-weight: 400;
+	font-family: "Work Sans";
+}
+
+.projets p {
+	display: none;
+}
+
+.projets svg {
+	display: none;
+}
