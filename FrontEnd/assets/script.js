@@ -1,9 +1,17 @@
+// Récupération des travaux
 async function fetchData() {
   const response = await fetch("http://localhost:5678/api/works");
   const data = await response.json();
   return data;
 }
 fetchData();
+//
+
+//////////////////////////////////////////
+//////////GESTION DE LA GALLERIE//////////
+//////////////////////////////////////////
+
+// Affichage gallerie
 async function displayData() {
   const fetchedData = await fetchData();
   const gallery = document.querySelector(".gallery");
@@ -24,7 +32,13 @@ async function displayData() {
 
 document.addEventListener("DOMContentLoaded", function () {
   displayData();
+  //
 
+  //////////////////////////////////////////
+  ///////////GESTION DES BOUTONS////////////
+  //////////////////////////////////////////
+
+  // Récupération des catégories des photos
   async function recoveryCategorys() {
     const response = await fetch("http://localhost:5678/api/categories");
     const data = await response.json();
@@ -32,7 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
     return data;
   }
   recoveryCategorys();
+  //
 
+  // Création du boutons "tous"
   const h2 = document.querySelector(".projets h2");
   const containerButtons = document.createElement("div");
   const buttonTous = document.createElement("button");
@@ -43,7 +59,9 @@ document.addEventListener("DOMContentLoaded", function () {
   buttonTous.id = 0;
   let buttons = [];
   buttons.push(buttonTous);
+  //
 
+  // Création des autres boutons
   async function displayCategorys() {
     const categorys = await recoveryCategorys();
     categorys.forEach((category) => {
@@ -51,13 +69,16 @@ document.addEventListener("DOMContentLoaded", function () {
       button.textContent = category.name;
       button.id = category.id;
       button.classList.add("button");
-
       containerButtons.appendChild(button);
-
       buttons.push(button);
     });
   }
   displayCategorys();
+  //
+
+  //
+  // Gestion des filtres des boutons
+  let activeButtonIds = [];
   async function filter() {
     const allPhotos = await fetchData();
     const allButtons = document.querySelectorAll("button");
@@ -67,28 +88,41 @@ document.addEventListener("DOMContentLoaded", function () {
         const gallery = document.querySelector(".gallery");
         gallery.innerHTML = "";
         button.classList.toggle("activationButton");
-        if (buttonId !== "0") {
-          const filterCategory = allPhotos.filter((photos) => {
-            return photos.categoryId === buttonId;
-          });
 
-          filterCategory.forEach((photos) => {
-            let figure = document.createElement("figure");
-            gallery.appendChild(figure);
+        // Suppression de la classe "activationButton" de tous les boutons sauf celui qui a été cliqué
+        allButtons.forEach((btn) => {
+          if (btn !== button) {
+            btn.classList.remove("activationButton");
+          }
+        });
 
-            let img = document.createElement("img");
-            img.src = photos.imageUrl;
-            figure.appendChild(img);
-
-            let figcaption = document.createElement("figcaption");
-            figcaption.textContent = photos.title;
-            figure.appendChild(figcaption);
-          });
+        if (activeButtonIds.includes(buttonId)) {
+          activeButtonIds = activeButtonIds.filter((id) => id !== buttonId);
+        } else {
+          activeButtonIds.push(buttonId);
         }
-        if (buttonId === 0) {
-          displayData();
-        }
+
+        // Filtrage des photos en fonction des identifiants des boutons activés
+        const filteredPhotos = allPhotos.filter((photo) => {
+          return activeButtonIds.includes(photo.categoryId);
+        });
+
+        // Affichage des photos correspondantes
+        filteredPhotos.forEach((photo) => {
+          let figure = document.createElement("figure");
+          gallery.appendChild(figure);
+
+          let img = document.createElement("img");
+          img.src = photo.imageUrl;
+          figure.appendChild(img);
+
+          let figcaption = document.createElement("figcaption");
+          figcaption.textContent = photo.title;
+          figure.appendChild(figcaption);
+        });
       });
+
+      //
       const loged = window.sessionStorage.loged;
       const logout = document.getElementById("logintext");
       const editionAdmin = document.querySelector(".edition");
@@ -285,25 +319,52 @@ document.addEventListener("DOMContentLoaded", function () {
     const choicePhoto = document.querySelector(".choicePhoto");
     const titleForm = document.getElementById("title");
     const categoryForm = document.getElementById("category");
+    const token = window.sessionStorage.authToken;
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault(); // Appel de preventDefault avec des parenthèses
+    // Ajouter un projet
+    async function addWork(event) {
+      event.preventDefault();
 
-      const formData = new FormData(form);
-      fetch("http://localhost:5678/api/works/", {
-        method: "POST",
-        body: formData, // Utilisation de formData directement comme corps
-        // headers: { "content-Type": "application/json" }, // Ne spécifiez pas de Content-Type pour les données de FormData
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          photos();
-          displayData();
-        })
-        .catch((error) => {
-          console.error("Erreur lors de la soumission du formulaire :", error);
-        });
-    });
+      const title = document.getElementById("title").value;
+      const categoryId = document.getElementById("category").id.value;
+      const image = imgPreview.files[0];
+
+      if (title === "" || categoryId === "" || image === undefined) {
+        alert("Merci de remplir tous les champs");
+        return;
+      } else {
+        try {
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("category", categoryId);
+          formData.append("image", image);
+
+          const response = await fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: multipart / form - data,
+          });
+
+          if (response.status === 201) {
+            alert("Projet ajouté avec succès :)");
+            displayData();
+            recoveryCategorys();
+            filter();
+          } else if (response.status === 400) {
+            alert("Merci de remplir tous les champs");
+          } else if (response.status === 500) {
+            alert("Erreur serveur");
+          } else if (response.status === 401) {
+            alert("Vous n'êtes pas autorisé à ajouter un projet");
+            window.location.href = "../log.html";
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
   });
 
   filter();
