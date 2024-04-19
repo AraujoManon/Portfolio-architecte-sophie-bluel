@@ -186,10 +186,11 @@ document.addEventListener("DOMContentLoaded", function () {
   addPicture.addEventListener("click", () => {
     seeGallery.style.display = "none";
     uploadPicture.style.display = "flex";
+    displayData();
   });
   //
 
-  // gestion de la gallerie
+  // gestion des photos
   async function photos() {
     const dataPhotos = await fetchData();
     const tinyPicture = document.querySelector(".tinyPicture");
@@ -217,15 +218,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   photos();
-
-  // création du delete
   function deletePicture() {
+    const tinyPicture = document.querySelector(".tinyPicture");
     const allTrash = document.querySelectorAll(".fa-trash-can");
     const token = window.sessionStorage.authToken;
+
     allTrash.forEach((trash) => {
       trash.addEventListener("click", (e) => {
         tinyPicture.innerHTML = "";
-        const id = trash.id;
+        const id = e.target.id; // Capturer l'ID depuis l'événement du clic
+
         const deletePhoto = {
           method: "DELETE",
           headers: {
@@ -233,26 +235,23 @@ document.addEventListener("DOMContentLoaded", function () {
             Authorization: `Bearer ${token}`,
           },
         };
+
         fetch("http://localhost:5678/api/works/" + id, deletePhoto)
           .then((response) => {
             if (!response.ok) {
               console.error("Une erreur s'est produite :", response);
             }
-            return response.json();
+            return response;
           })
           .then((data) => {
             console.log("La suppression est OK, data :", data);
-            // Rafraîchir la galerie et la modal après la suppression
             photos();
             displayData();
           });
       });
     });
+    console.log(allTrash);
   }
-
-  //
-
-  //
 
   // gestion de la 2ème fenêtre
   // récupération des balises:
@@ -300,72 +299,94 @@ document.addEventListener("DOMContentLoaded", function () {
       };
       reader.readAsDataURL(file);
     }
-    categoryModal();
-    // création de catégories dans l'input
-    async function categoryModal() {
-      const select = document.querySelector("select");
-      const categorys = await recoveryCategorys();
-      categorys.forEach((category) => {
-        const option = document.createElement("option");
-        option.value = category.id;
-        option.textContent = category.name;
-        select.appendChild(option);
+  });
+  categoryModal();
+  // création de catégories dans l'input
+  async function categoryModal() {
+    const select = document.querySelector("select");
+    const categorys = await recoveryCategorys();
+    categorys.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      select.appendChild(option);
+    });
+  }
+
+  const form = document.querySelector(".uploadPicture form");
+  const containerFile = document.querySelector(".containerFile");
+  const choicePhoto = document.querySelector(".choicePhoto");
+  const titleForm = document.getElementById("title");
+  const categoryForm = document.getElementById("category");
+  const token = window.sessionStorage.authToken;
+
+  // Définir une fonction pour réinitialiser la div "choice" à son contenu par défaut
+  function resetChoiceDiv() {
+    const imgPreview = document.querySelector(".containerFile img");
+    const addFile = document.getElementById("addFile");
+    const pPreview = document.querySelector(".containerFile p");
+    const svgPreview = document.querySelector(".choicePhoto svg");
+    const buttonPicture = document.querySelector(".buttonPicture");
+
+    // Réinitialiser l'aperçu de l'image
+    imgPreview.src = "";
+    imgPreview.style.display = "none";
+    pPreview.style.display = "flex";
+    svgPreview.style.display = "flex";
+    buttonPicture.style.display = "flex";
+
+    // Réinitialiser le champ d'entrée de fichier
+    addFile.value = null;
+    titleForm.value = null;
+    categoryForm.value = null;
+  }
+
+  // Ajouter un projet
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
       });
-    }
 
-    // post pour poster une photo
-    const form = document.querySelector(".choicePhoto form");
-    const containerFile = document.querySelector(".containerFile");
-    const choicePhoto = document.querySelector(".choicePhoto");
-    const titleForm = document.getElementById("title");
-    const categoryForm = document.getElementById("category");
-    const token = window.sessionStorage.authToken;
-
-    // Ajouter un projet
-    async function addWork(event) {
-      event.preventDefault();
-
-      const title = document.getElementById("title").value;
-      const categoryId = document.getElementById("category").id.value;
-      const image = imgPreview.files[0];
-
-      if (title === "" || categoryId === "" || image === undefined) {
+      if (response.status === 201) {
+        alert("Projet ajouté avec succès");
+        const gallery = document.querySelector(".gallery");
+        gallery.innerHTML = "";
+        displayData();
+        recoveryCategorys();
+        photos();
+        resetChoiceDiv();
+      } else if (response.status === 400) {
         alert("Merci de remplir tous les champs");
-        return;
-      } else {
-        try {
-          const formData = new FormData();
-          formData.append("title", title);
-          formData.append("category", categoryId);
-          formData.append("image", image);
-
-          const response = await fetch("http://localhost:5678/api/works", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            body: multipart / form - data,
-          });
-
-          if (response.status === 201) {
-            alert("Projet ajouté avec succès :)");
-            displayData();
-            recoveryCategorys();
-            filter();
-          } else if (response.status === 400) {
-            alert("Merci de remplir tous les champs");
-          } else if (response.status === 500) {
-            alert("Erreur serveur");
-          } else if (response.status === 401) {
-            alert("Vous n'êtes pas autorisé à ajouter un projet");
-            window.location.href = "../log.html";
-          }
-        } catch (error) {
-          console.log(error);
-        }
+      } else if (response.status === 500) {
+        alert("Erreur serveur");
+      } else if (response.status === 401) {
+        alert("Vous n'êtes pas autorisé à ajouter un projet");
+        window.location.href = "../log.html";
       }
+    } catch (error) {
+      console.log(error);
     }
+    //
   });
 
+  // Boutons de validation
+
+  // function verificationInput() {
+  //   const buttonValidation = getElementById(validation);
+  //   form.addEventListener("input",()=>{
+  //     if (!title.value ==""|| !category.value == "" || !imgPreview == ""){
+  //      buttonValidation.classList.add("validationActivate")
+  //     }
+  //   })
+  // //
+  // verificationInput();
   filter();
 });
