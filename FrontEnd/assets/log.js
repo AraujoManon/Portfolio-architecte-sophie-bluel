@@ -1,9 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
+  //  récupération des balises
   const email = document.querySelector("form #email");
   const password = document.querySelector("form #password");
   const form = document.querySelector("form");
   const messageError = document.querySelector("section#login p");
+  //
 
+  // récupération des données de connection et des donnée backend
   async function loginUser() {
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
@@ -18,7 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
         headers: { "Content-Type": "application/json" },
         body: chargeUtile,
       });
+      //
 
+      // gestion des résultats
       if (response.ok) {
         const responseData = await response.json();
         const token = responseData.token;
@@ -32,12 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  //
 
+  // gestion du bouton
   const loginButton = document.querySelector("button");
   loginButton.addEventListener("click", function (event) {
     event.preventDefault();
     form.dispatchEvent(new Event("submit"));
   });
-
+  //
   loginUser();
 });

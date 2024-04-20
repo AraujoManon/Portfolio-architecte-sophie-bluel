@@ -34,6 +34,13 @@ document.addEventListener("DOMContentLoaded", function () {
   displayData();
   //
 
+  //bouton de login
+  let loginButton = document.getElementById("logintext");
+  loginButton.addEventListener("click", function () {
+    window.location.href = "log.html";
+  });
+  //
+
   //////////////////////////////////////////
   ///////////GESTION DES BOUTONS////////////
   //////////////////////////////////////////
@@ -42,13 +49,12 @@ document.addEventListener("DOMContentLoaded", function () {
   async function recoveryCategorys() {
     const response = await fetch("http://localhost:5678/api/categories");
     const data = await response.json();
-
     return data;
   }
   recoveryCategorys();
   //
 
-  // Création du boutons "tous"
+  // création du bouton "tous"
   const h2 = document.querySelector(".projets h2");
   const containerButtons = document.createElement("div");
   const buttonTous = document.createElement("button");
@@ -61,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
   buttons.push(buttonTous);
   //
 
-  // Création des autres boutons
+  // création des autres boutons
   async function displayCategorys() {
     const categorys = await recoveryCategorys();
     categorys.forEach((category) => {
@@ -76,9 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
   displayCategorys();
   //
 
-  //
-  // Gestion des filtres des boutons
-  let activeButtonIds = [];
+  // création de la logique de filtrage
   async function filter() {
     const allPhotos = await fetchData();
     const allButtons = document.querySelectorAll("button");
@@ -88,41 +92,41 @@ document.addEventListener("DOMContentLoaded", function () {
         const gallery = document.querySelector(".gallery");
         gallery.innerHTML = "";
         button.classList.toggle("activationButton");
-
-        // Suppression de la classe "activationButton" de tous les boutons sauf celui qui a été cliqué
+        if (buttonId !== "0") {
+          const filterCategory = allPhotos.filter((photos) => {
+            return photos.categoryId === buttonId;
+          });
+          filterCategory.forEach((photos) => {
+            let figure = document.createElement("figure");
+            gallery.appendChild(figure);
+            let img = document.createElement("img");
+            img.src = photos.imageUrl;
+            figure.appendChild(img);
+            let figcaption = document.createElement("figcaption");
+            figcaption.textContent = photos.title;
+            figure.appendChild(figcaption);
+          });
+        }
+        if (buttonId === 0) {
+          displayData();
+        }
+        //
+        // ajout de la classe au bouton une fois cliquer
         allButtons.forEach((btn) => {
           if (btn !== button) {
             btn.classList.remove("activationButton");
           }
         });
-
-        if (activeButtonIds.includes(buttonId)) {
-          activeButtonIds = activeButtonIds.filter((id) => id !== buttonId);
-        } else {
-          activeButtonIds.push(buttonId);
-        }
-
-        // Filtrage des photos en fonction des identifiants des boutons activés
-        const filteredPhotos = allPhotos.filter((photo) => {
-          return activeButtonIds.includes(photo.categoryId);
-        });
-
-        // Affichage des photos correspondantes
-        filteredPhotos.forEach((photo) => {
-          let figure = document.createElement("figure");
-          gallery.appendChild(figure);
-
-          let img = document.createElement("img");
-          img.src = photo.imageUrl;
-          figure.appendChild(img);
-
-          let figcaption = document.createElement("figcaption");
-          figcaption.textContent = photo.title;
-          figure.appendChild(figcaption);
-        });
+        //
       });
+      //
+
+      //////////////////////////////////////////////////////////////////
+      ///////////GESTION DE L AFFICHAGE UNE FOIS L ADMIN LOG////////////
+      //////////////////////////////////////////////////////////////////
 
       //
+      // récupération des balise
       const loged = window.sessionStorage.loged;
       const logout = document.getElementById("logintext");
       const editionAdmin = document.querySelector(".edition");
@@ -131,7 +135,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const pAdmin = document.querySelector(".projets p");
       const svgAdmin = document.querySelector(".projets svg");
       const token = window.sessionStorage.authToken;
-
+      //
+      // gestion de l'affichage et du logout
       if (loged == "true" && "token") {
         logout.textContent = "logout";
         editionAdmin.classList.add("editionAdmin");
@@ -150,14 +155,18 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-  // création de la modal
-  // récupération des balises et classes
+  //
+
+  ///////////////////////////
+  ///////////MODAL////////////
+  ////////////////////////////
+
+  // récupération des balises
   const pAdmin = document.querySelector(".projets p");
   const containerModals = document.querySelector(".containerModals");
   const seeGallery = document.querySelector(".seeGallery");
   const firstWindowcroix = document.querySelector(".seeGallery .croix");
   const addPicture = document.querySelector(".addPicture");
-
   //
 
   // gestion au clique de "modifier"
@@ -176,12 +185,14 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   //
 
-  // gestion de la 1er fenêtre :
+  // gestion de la 1er fenêtre de la modal:
+
   // croix
   firstWindowcroix.addEventListener("click", () => {
     containerModals.style.display = "none";
   });
   //
+
   // bouton
   addPicture.addEventListener("click", () => {
     seeGallery.style.display = "none";
@@ -190,18 +201,19 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   //
 
-  // gestion des photos
+  // gestion des photos miniature
   async function photos() {
     const dataPhotos = await fetchData();
     const tinyPicture = document.querySelector(".tinyPicture");
     tinyPicture.innerHTML = "";
     tinyPicture.classList.add("format");
     //
+
     // création photo et poubelle
     dataPhotos.forEach((photo) => {
       const figure = document.createElement("figure");
       figure.classList.add("tinyImg");
-      const buttonTrash = document.createElement("button");
+      const buttonTrash = document.createElement("i");
       buttonTrash.classList.add("containerTrash");
       const img = document.createElement("img");
       img.src = photo.imageUrl;
@@ -216,8 +228,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     deletePicture();
   }
-
+  //
   photos();
+
+  // Gestion du delete
   function deletePicture() {
     const tinyPicture = document.querySelector(".tinyPicture");
     const allTrash = document.querySelectorAll(".fa-trash-can");
@@ -226,7 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
     allTrash.forEach((trash) => {
       trash.addEventListener("click", (e) => {
         tinyPicture.innerHTML = "";
-        const id = e.target.id; // Capturer l'ID depuis l'événement du clic
+        const id = e.target.id;
 
         const deletePhoto = {
           method: "DELETE",
@@ -245,6 +259,8 @@ document.addEventListener("DOMContentLoaded", function () {
           })
           .then((data) => {
             console.log("La suppression est OK, data :", data);
+            const gallery = document.querySelector(".gallery");
+            gallery.innerHTML = "";
             photos();
             displayData();
           });
@@ -252,8 +268,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     console.log(allTrash);
   }
+  //
 
-  // gestion de la 2ème fenêtre
+  // gestion de la 2ème fenêtre de la modal
   // récupération des balises:
   const secondtWindowcroix = document.querySelector(".svgUploadPicture .croix");
   const uploadPicture = document.querySelector(".uploadPicture");
@@ -270,15 +287,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   //
 
-  //bouton de login
-  let loginButton = document.getElementById("logintext");
-  loginButton.addEventListener("click", function () {
-    window.location.href = "log.html";
-  });
-  //
-  // gestion de la prévisualisation de l'image
-  // récupération des balises
-
+  // gestion du post
+  // récupération des balises pour la prévisualista
   const imgPreview = document.querySelector(".containerFile img");
   const addFile = document.getElementById("addFile");
   const pPreview = document.querySelector(".containerFile p");
@@ -286,6 +296,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const buttonPicture = document.querySelector(".buttonPicture");
   //
 
+  // gestion du bouton et de la prévisualisation
   addFile.addEventListener("change", () => {
     const file = addFile.files[0];
     if (file) {
@@ -301,6 +312,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
   categoryModal();
+  //
+
   // création de catégories dans l'input
   async function categoryModal() {
     const select = document.querySelector("select");
@@ -312,15 +325,18 @@ document.addEventListener("DOMContentLoaded", function () {
       select.appendChild(option);
     });
   }
+  //
 
+  // récupération de balises
   const form = document.querySelector(".uploadPicture form");
   const containerFile = document.querySelector(".containerFile");
   const choicePhoto = document.querySelector(".choicePhoto");
   const titleForm = document.getElementById("title");
   const categoryForm = document.getElementById("category");
   const token = window.sessionStorage.authToken;
+  //
 
-  // Définir une fonction pour réinitialiser la div "choice" à son contenu par défaut
+  // fonction pour reset les champs
   function resetChoiceDiv() {
     const imgPreview = document.querySelector(".containerFile img");
     const addFile = document.getElementById("addFile");
@@ -328,20 +344,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const svgPreview = document.querySelector(".choicePhoto svg");
     const buttonPicture = document.querySelector(".buttonPicture");
 
-    // Réinitialiser l'aperçu de l'image
+    // Réinitialisation l'aperçu de l'image
     imgPreview.src = "";
     imgPreview.style.display = "none";
     pPreview.style.display = "flex";
     svgPreview.style.display = "flex";
     buttonPicture.style.display = "flex";
 
-    // Réinitialiser le champ d'entrée de fichier
+    // Réinitialisation du champ d'entrée de fichier
     addFile.value = null;
     titleForm.value = null;
     categoryForm.value = null;
   }
+  //
 
-  // Ajouter un projet
+  // logique de l'ajout
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
@@ -374,19 +391,30 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.log(error);
     }
-    //
   });
+  //
 
-  // Boutons de validation
+  // Bouton de validation
+  function verificationInput() {
+    const validationButton = document.getElementById("validation");
+    const form = document.querySelector(".uploadPicture form");
 
-  // function verificationInput() {
-  //   const buttonValidation = getElementById(validation);
-  //   form.addEventListener("input",()=>{
-  //     if (!title.value ==""|| !category.value == "" || !imgPreview == ""){
-  //      buttonValidation.classList.add("validationActivate")
-  //     }
-  //   })
-  // //
-  // verificationInput();
+    form.addEventListener("input", () => {
+      const titleForm = document.getElementById("title").value;
+      const categoryForm = document.getElementById("category").value;
+      const addFile = document.getElementById("addFile").value;
+      console.log(titleForm);
+      if (titleForm !== "" && categoryForm !== "" && addFile !== "") {
+        validationButton.classList.remove("validation");
+        validationButton.classList.add("validationActivate");
+      } else {
+        validationButton.classList.add("validation");
+        validationButton.classList.remove("validationActivate");
+      }
+    });
+  }
+  verificationInput();
+  //
+
   filter();
 });

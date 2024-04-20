@@ -422,7 +422,7 @@ footer nav ul {
 .containerTrash {
 position: relative;
 border: none;
-top: -35px;
+top: -55px;
 right: 8px;
 background-color: transparent;
 
@@ -570,7 +570,7 @@ form {
   margin-bottom: 47px;
 }
 
-#validation {
+.uploadPicture .validation {
   width: 237px;
   height: 36px;
   border-radius: 60px;
@@ -584,7 +584,15 @@ form {
   margin-bottom: 55px;
 }
 
-.validationActivate {
+.uploadPicture .validationActivate {
   background: #1d6154;
-  border: 1px solid #1d6154;
+  border: 1px solid #1d6154;    width: 237px;
+  height: 36px;
+  border-radius: 60px;
+  text-align: center;
+  font-family: Syne;
+  font-size: 14px;
+  font-weight: 700;
+  border: 0px;
+  margin-bottom: 55px;
 }
