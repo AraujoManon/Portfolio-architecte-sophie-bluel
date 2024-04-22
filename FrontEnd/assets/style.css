@@ -323,20 +323,6 @@ footer nav ul {
   
 }
 
-.projetTitleSvg {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  position: relative;
-  top: -85px;
-  right: 150px;
-}
-
-
-.projetsAdmin h2 {
-position: relative;
-}
-
 .projetP {
   display: none;
 }
@@ -365,10 +351,12 @@ position: relative;
   margin-top: 139px;
   margin-bottom: 68px;
   height: 36px;
-  position: relative;
-  right: -60px;
+  align-items: baseline;
 }
 
+.boutonsNone {
+  display: none;
+}
 
 
 /* Modals */

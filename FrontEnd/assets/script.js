@@ -134,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const projetsAdmin = document.querySelector(".projets");
       const pAdmin = document.querySelector(".projets p");
       const svgAdmin = document.querySelector(".projets svg");
+      const buttons = document.querySelectorAll("button");
       const token = window.sessionStorage.authToken;
 
       // Gestion de l'affichage et du logout
@@ -144,7 +145,9 @@ document.addEventListener("DOMContentLoaded", function () {
         pAdmin.classList.add("pAdmin");
         svgAdmin.classList.add("svgAdmin");
         projetsAdmin.classList.add("projetsAdmin");
-
+        buttons.forEach((button) => {
+          button.classList.add("boutonsNone");
+        });
         logout.addEventListener("click", () => {
           window.sessionStorage.loged = false;
           window.location.href = "index.html";
