@@ -145,13 +145,9 @@ document.addEventListener("DOMContentLoaded", function () {
         svgAdmin.classList.add("svgAdmin");
         projetsAdmin.classList.add("projetsAdmin");
 
-        buttons.forEach((button) => {
-          button.classList.add("buttonAdmin");
-        });
-
         logout.addEventListener("click", () => {
           window.sessionStorage.loged = false;
-          window.location.href = "../index.html";
+          window.location.href = "index.html";
         });
       }
     });
@@ -385,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Erreur serveur");
       } else if (response.status === 401) {
         alert("Vous n'êtes pas autorisé à ajouter un projet");
-        window.location.href = "../log.html";
+        window.location.href = "og.html";
       }
     } catch (error) {}
   });

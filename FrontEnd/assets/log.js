@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const token = responseData.token;
         window.sessionStorage.setItem("authToken", token); // Stocke le token d'authentification
         window.sessionStorage.setItem("loged", true); // Marque l'utilisateur comme connecté
-        window.location.href = "../index.html";
+        window.location.href = "index.html";
       } else {
         messageError.textContent =
           "Votre mot de passe ou votre email est incorrect.";
