@@ -135,9 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const pAdmin = document.querySelector(".projets p");
       const svgAdmin = document.querySelector(".projets svg");
       const token = window.sessionStorage.authToken;
-      //
-      // gestion de l'affichage et du logout
-      if (loged == "true" && "token") {
+
+      // Gestion de l'affichage et du logout
+      if (loged === "true" && token) {
         logout.textContent = "logout";
         editionAdmin.classList.add("editionAdmin");
         h1Admin.classList.add("h1Admin");
@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         logout.addEventListener("click", () => {
           window.sessionStorage.loged = false;
+          window.location.href = "../index.html";
         });
       }
     });
@@ -257,8 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             return response;
           })
-          .then((data) => {
-            console.log("La suppression est OK, data :", data);
+          .then(() => {
             const gallery = document.querySelector(".gallery");
             gallery.innerHTML = "";
             photos();
@@ -266,7 +266,6 @@ document.addEventListener("DOMContentLoaded", function () {
           });
       });
     });
-    console.log(allTrash);
   }
   //
 
@@ -388,9 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Vous n'êtes pas autorisé à ajouter un projet");
         window.location.href = "../log.html";
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   });
   //
 
@@ -403,7 +400,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const titleForm = document.getElementById("title").value;
       const categoryForm = document.getElementById("category").value;
       const addFile = document.getElementById("addFile").value;
-      console.log(titleForm);
       if (titleForm !== "" && categoryForm !== "" && addFile !== "") {
         validationButton.classList.remove("validation");
         validationButton.classList.add("validationActivate");

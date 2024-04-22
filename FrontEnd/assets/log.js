@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (response.ok) {
         const responseData = await response.json();
         const token = responseData.token;
-        console.log(responseData.token);
         window.sessionStorage.setItem("authToken", token); // Stocke le token d'authentification
         window.sessionStorage.setItem("loged", true); // Marque l'utilisateur comme connecté
         window.location.href = "../index.html";
