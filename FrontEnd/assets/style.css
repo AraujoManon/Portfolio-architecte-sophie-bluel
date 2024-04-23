@@ -450,6 +450,8 @@ background-color: transparent;
   font-weight: 700;
   width: 237px;
   height: 36px;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 2nd affichage */

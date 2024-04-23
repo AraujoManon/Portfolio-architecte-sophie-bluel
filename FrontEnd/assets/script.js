@@ -8,10 +8,10 @@ fetchData();
 //
 
 //////////////////////////////////////////
-//////////GESTION DE LA GALLERIE//////////
+//////////GESTION DE LA GALERIE//////////
 //////////////////////////////////////////
 
-// Affichage gallerie
+// Affichage galerie
 async function displayData() {
   const fetchedData = await fetchData();
   const gallery = document.querySelector(".gallery");
@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
         svgAdmin.classList.add("svgAdmin");
         projetsAdmin.classList.add("projetsAdmin");
         buttons.forEach((button) => {
-          button.classList.add("boutonsNone");
+          button.style.display = "none";
         });
         logout.addEventListener("click", () => {
           window.sessionStorage.loged = false;
@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
     containerModals.style.display = "flex";
     seeGallery.style.display = "flex";
     uploadPicture.style.display = "none";
+    addPicture.style.display = "flex";
   });
   //
 
@@ -197,6 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
   addPicture.addEventListener("click", () => {
     seeGallery.style.display = "none";
     uploadPicture.style.display = "flex";
+
     displayData();
   });
   //
@@ -321,6 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
       option.value = category.id;
       option.textContent = category.name;
       select.appendChild(option);
+      resetChoiceDiv();
     });
   }
   //
@@ -384,7 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Erreur serveur");
       } else if (response.status === 401) {
         alert("Vous n'êtes pas autorisé à ajouter un projet");
-        window.location.href = "og.html";
+        window.location.href = "log.html";
       }
     } catch (error) {}
   });
